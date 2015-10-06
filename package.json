@@ -1,0 +1,36 @@
+{
+  "name": "immutable-backbone",
+  "version": "1.0.0",
+  "description": "Infects Backbone with immutability for Model#attributes and Collection#models",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "backbone": "^1.2.3",
+    "chai": "^3.3.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.3.3"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benjie/immutable-backbone.git"
+  },
+  "keywords": [
+    "immutable",
+    "backbone",
+    "react",
+    "reactjs",
+    "backbonejs"
+  ],
+  "author": "Benjie Gillam <code@benjiegillam.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/benjie/immutable-backbone/issues"
+  },
+  "homepage": "https://github.com/benjie/immutable-backbone#readme"
+}
