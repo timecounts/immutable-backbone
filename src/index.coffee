@@ -18,49 +18,52 @@
 #   i.e. newO = _.extend({}, m.get('o'), {foo: bar}); m.set('o', newO);
 ###
 
+defaultOptions =
+  freeze: true
+
 clone = (o) ->
   newO = {}
   for own k, v of o
     newO[k] = v
   return newO
 
-exports.infectModelClass = (klass) ->
+freeze = (o) ->
+  if Object.freeze
+    Object.freeze o
+  else
+    o
+
+immutableWrap = (klass, method, properties, options = defaultOptions) ->
+  oldMethod = klass.prototype[method]
+  klass.prototype[method] = ->
+    for property in properties
+      this[property] = clone this[property]
+    result = oldMethod.apply(this, arguments)
+    if options.freeze
+      for property in properties
+        this[property] = freeze this[property]
+    return result
+  return
+
+exports.infectModelClass = (klass, options) ->
   throw new Error("Backbone Model Class expected") unless klass::idAttribute
-
-  oldSet = klass::set
-  klass::set = ->
-    @attributes = clone @attributes
-    oldSet.apply(this, arguments)
-
+  immutableWrap(klass, 'set', ['attributes'], options)
   return
 
-exports.infectCollectionClass = (klass) ->
+exports.infectCollectionClass = (klass, options) ->
   throw new Error("Backbone Collection Class expected") unless klass::set
-
-  oldSet = klass::set
-  klass.set = ->
-    @models = @models[..]
-    oldSet.apply(this, arguments)
-
-  old_removeModels = klass::_removeModels
-  klass::_removeModels = ->
-    @models = @models[..]
-    old_removeModels.apply(this, arguments)
-
-  oldSort = klass::sort
-  klass.sort = ->
-    @models = @models[..]
-    oldSort.apply(this, arguments)
-
+  immutableWrap(klass, 'set', ['models'], options)
+  immutableWrap(klass, 'sort', ['models'], options)
+  immutableWrap(klass, '_removeModels', ['models'], options)
   return
 
-exports.infect = (klass) ->
+exports.infect = (klass, options) ->
   unless klass::set
     if klass.set
       extra = ", not an instance"
     throw new Error("infect must be called on a Backbone Model/Collection class#{extra}")
   if klass::idAttribute
-    exports.infectModelClass(klass)
+    exports.infectModelClass(klass, options)
   else
-    exports.infectCollectionClass(klass)
+    exports.infectCollectionClass(klass, options)
   return
