@@ -6,12 +6,12 @@
   "directories": {
     "test": "test"
   },
-  "dependencies": {
-    "backbone": "^1.2.3",
-    "chai": "^3.3.0"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "mocha": "^2.3.3"
+    "backbone": "^1.2.3",
+    "chai": "^3.3.0",
+    "mocha": "^2.3.3",
+    "react": "^0.13.3"
   },
   "scripts": {
     "test": "mocha"
