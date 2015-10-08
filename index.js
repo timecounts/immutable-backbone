@@ -23,7 +23,9 @@ var defaultOptions = {
 };
 
 function clone(o) {
-  if (Object.assign) {
+  if (Array.isArray(o)) {
+    return o.slice();
+  } else if (Object.assign) {
     return Object.assign({}, o);
   } else {
     var newO = {};
@@ -67,6 +69,7 @@ exports.infectModelClass = function(klass, options) {
     throw new Error("Backbone Model Class expected");
   }
   immutableWrap(klass, 'set', ['attributes'], options);
+  klass.prototype._immutableBackboneModel = true;
 };
 
 exports.infectCollectionClass = function(klass, options) {
@@ -76,6 +79,7 @@ exports.infectCollectionClass = function(klass, options) {
   immutableWrap(klass, 'set', ['models'], options);
   immutableWrap(klass, 'sort', ['models'], options);
   immutableWrap(klass, '_removeModels', ['models'], options);
+  klass.prototype._immutableBackboneCollection = true;
 };
 
 exports.infect = function(klass, options) {
