@@ -46,18 +46,23 @@ function freeze(o) {
   }
 }
 
-function immutableWrap(klass, method, properties, options) {
+function immutableWrap(klass, method, properties, options, criteria) {
   var oldMethod = klass.prototype[method];
   options = options || defaultOptions;
   klass.prototype[method] = function() {
     var i, l;
-    for (i = 0, l = properties.length; i < l; i++) {
-      this[properties[i]] = clone(this[properties[i]]);
+    var doIt = !criteria || criteria.apply(this, arguments);
+    if (doIt) {
+      for (i = 0, l = properties.length; i < l; i++) {
+        this[properties[i]] = clone(this[properties[i]]);
+      }
     }
     var result = oldMethod.apply(this, arguments);
-    if (options.freeze) {
-      for (i = 0, l = properties.length; i < l; i++) {
-        this[properties[i]] = freeze(this[properties[i]]);
+    if(doIt) {
+      if (options.freeze) {
+        for (i = 0, l = properties.length; i < l; i++) {
+          this[properties[i]] = freeze(this[properties[i]]);
+        }
       }
     }
     return result;
@@ -82,6 +87,7 @@ exports.infectCollectionClass = function(klass, options) {
   immutableWrap(klass, 'set', ['models'], options);
   immutableWrap(klass, 'sort', ['models'], options);
   immutableWrap(klass, '_removeModels', ['models'], options);
+  immutableWrap(klass, '_onModelEvent', ['models'], options, function(event) { return event === 'change';});
   klass.prototype._immutableBackboneCollection = true;
 };
 
