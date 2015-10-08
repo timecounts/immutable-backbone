@@ -105,3 +105,71 @@ exports.infect = function(klass, options) {
     exports.infectCollectionClass(klass, options);
   }
 };
+
+function updateStash(newStash, oldStash, key, modelOrCollection, properties) {
+  var changed = false, i, property;
+  if (!oldStash[key]) {
+    changed = true;
+  } else {
+    for (i in properties) {
+      property = properties[i];
+      changed = changed || oldStash[key][property] !== modelOrCollection[property];
+    }
+  }
+  if (changed) {
+    newStash[key] = {};
+    for (i in properties) {
+      property = properties[i];
+      newStash[key][property] = modelOrCollection[property];
+    }
+  } else {
+    newStash[key] = oldStash[key];
+  }
+  return changed;
+}
+
+exports.PureRenderMixin = {
+  componentDidMount: function() {
+    this._immutableBackbonePropsStash = this.stashBackbone({}, {}, this.props).stash;
+    this._immutableBackboneStateStash = this.stashBackbone({}, {}, this.state).stash;
+  },
+  componentWillUpdate: function(nextProps, nextState) {
+    this._immutableBackbonePropsStash = this.stashBackbone(this._immutableBackbonePropsStash, this.props, nextProps).stash;
+    this._immutableBackboneStateStash = this.stashBackbone(this._immutableBackboneStateStash, this.state, nextState).stash;
+  },
+  componentWillUnmount: function() {
+    delete this._immutableBackbonePropsStash;
+    delete this._immutableBackboneStateStash;
+  },
+  shouldComponentUpdate: function(nextProps, nextState) {
+    var changed =
+      this.stashBackbone(this._immutableBackbonePropsStash, this.props, nextProps).changed ||
+      this.stashBackbone(this._immutableBackboneStateStash, this.state, nextState).changed;
+    return changed;
+  },
+  stashBackbone: function(oldStash, oldObjects, newObjects) {
+    var key, modelOrCollection, changed = false, newStash = {};
+    oldObjects = oldObjects || {};
+    newObjects = newObjects || {};
+    var newKeys = Object.keys(newObjects);
+    var oldKeys = Object.keys(oldObjects);
+    if (!changed) {
+      changed = (newKeys.length !== oldKeys.length);
+    }
+    for (key in newObjects) {
+      if (!changed) {
+        changed = oldKeys.indexOf(key) === -1;
+      }
+      if (!changed) {
+        changed = (oldObjects[key] !== value);
+      }
+      modelOrCollection = newObjects[key];
+      if (modelOrCollection._immutableBackboneModel) {
+        changed = updateStash(newStash, oldStash, key, modelOrCollection, ['attributes']) || changed;
+      } else if (modelOrCollection._immutableBackboneCollection) {
+        changed = updateStash(newStash, oldStash, key, modelOrCollection, ['models']) || changed;
+      }
+    }
+    return {changed: changed, stash: newStash};
+  }
+};
