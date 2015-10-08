@@ -76,6 +76,9 @@ exports.infectCollectionClass = function(klass, options) {
   if (!klass.prototype.set) {
     throw new Error("Backbone Collection Class expected");
   }
+  if (klass.prototype.model && !klass.prototype.model.prototype._immutableBackboneModel) {
+    throw new Error("Cannot make a collection immutable unless it's models are immutable");
+  }
   immutableWrap(klass, 'set', ['models'], options);
   immutableWrap(klass, 'sort', ['models'], options);
   immutableWrap(klass, '_removeModels', ['models'], options);

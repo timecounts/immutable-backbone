@@ -9,7 +9,7 @@ chai.config.includeStack = true;
 
 describe('Immutable backbone', function() {
   var ImmutableModel = Backbone.Model.extend({});
-  var ImmutableCollection = Backbone.Collection.extend({});
+  var ImmutableCollection = Backbone.Collection.extend({model: ImmutableModel});
 
   infect(ImmutableModel);
   infect(ImmutableCollection);
