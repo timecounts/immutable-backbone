@@ -92,6 +92,12 @@ exports.infectCollectionClass = function(klass, options) {
 };
 
 exports.infect = function(klass, options) {
+  if (klass.Model && klass.Collection) {
+    // Must be 'Backbone' itself?
+    infect(klass.Model, options);
+    infect(klass.Collection, options);
+    return;
+  }
   if (!klass.prototype.set) {
     var extra = "";
     if (klass.set) {
