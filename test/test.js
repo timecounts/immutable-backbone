@@ -70,6 +70,13 @@ describe('Immutable backbone', function() {
       expect(collection.models).not.to.equal(oldModels);
     });
 
+    it("replaces models on model change", function() {
+      var collection = new ImmutableCollection([{id: 1, foo: 'bar'}, {id: 2, foo: 'baz'}]);
+      var oldModels = collection.models;
+      collection.models[1].set('foo', 'qux');
+      expect(collection.models).not.to.equal(oldModels);
+    });
+
   });
 
 });
