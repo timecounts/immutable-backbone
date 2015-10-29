@@ -1,6 +1,6 @@
 {
   "name": "immutable-backbone",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Infects Backbone with immutability for Model#attributes and Collection#models",
   "main": "index.js",
   "directories": {
