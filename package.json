@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/benjie/immutable-backbone.git"
+    "url": "git+https://github.com/timecounts/immutable-backbone.git"
   },
   "keywords": [
     "immutable",
@@ -30,7 +30,7 @@
   "author": "Benjie Gillam <code@benjiegillam.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/benjie/immutable-backbone/issues"
+    "url": "https://github.com/timecounts/immutable-backbone/issues"
   },
-  "homepage": "https://github.com/benjie/immutable-backbone#readme"
+  "homepage": "https://github.com/timecounts/immutable-backbone#readme"
 }

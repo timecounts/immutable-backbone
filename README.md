@@ -69,7 +69,7 @@ untested (and not yet used) so no guarantees are made about it!
 License: MIT
 ------------
 
-Copyright © 2015 Benjie Gillam
+Copyright © 2015 Timecounts Inc
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the
