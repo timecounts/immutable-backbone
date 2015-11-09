@@ -46,17 +46,17 @@ function freeze(o) {
   }
 }
 
-// We never want nested immutable wraps
-var immutableWrapInProgress = false;
+// We never want nested immutable wraps for the same thing
+var immutableWrapsInProgress = []
 
 function immutableWrap(klass, method, properties, options, criteria) {
   var oldMethod = klass.prototype[method];
   options = options || defaultOptions;
   klass.prototype[method] = function() {
     var i, l, result, err;
-    var doIt = !immutableWrapInProgress && (!criteria || criteria.apply(this, arguments));
+    var doIt = (immutableWrapsInProgress.indexOf(this) < 0) && (!criteria || criteria.apply(this, arguments));
     if (doIt) {
-      immutableWrapInProgress = true;
+      immutableWrapsInProgress.push(this);
       for (i = 0, l = properties.length; i < l; i++) {
         this[properties[i]] = clone(this[properties[i]]);
       }
@@ -72,7 +72,7 @@ function immutableWrap(klass, method, properties, options, criteria) {
           this[properties[i]] = freeze(this[properties[i]]);
         }
       }
-      immutableWrapInProgress = false;
+      immutableWrapsInProgress.splice(immutableWrapsInProgress.indexOf(this), 1);
     }
     if (err) {
       throw err;

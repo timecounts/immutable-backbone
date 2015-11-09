@@ -1,6 +1,9 @@
 Immutable Backbone
 ==================
 
+[![Circle
+CI](https://circleci.com/gh/timecounts/immutable-backbone.svg?style=svg)](https://circleci.com/gh/timecounts/immutable-backbone)
+
 This is a helper to make Backbone models and collections easier to use
 with React without having to rewrite your code. It **does not** make the
 Backbone models/collections themselves immutable; however it does make a
