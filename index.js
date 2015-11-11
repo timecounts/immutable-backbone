@@ -179,7 +179,7 @@ exports.PureRenderMixin = {
         changed = oldKeys.indexOf(key) === -1;
       }
       if (!changed) {
-        changed = (oldObjects[key] !== value);
+        changed = (oldObjects[key] !== newObjects[key]);
       }
       modelOrCollection = newObjects[key];
       if (modelOrCollection._immutableBackboneModel) {
