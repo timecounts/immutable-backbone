@@ -124,13 +124,13 @@ exports.infect = function(klass, options) {
   }
 };
 
-function updateStash(newStash, oldStash, key, modelOrCollection, type, properties) {
+function updateStash(newStash, oldStash, key, modelOrCollection, _type, properties) {
   var changed = false, i, property;
   if (!oldStash[key]) {
     changed = (modelOrCollection != null);
   } else if (oldStash[key] && !modelOrCollection) {
     changed = true;
-  } else if (oldStash[key].type !== type) {
+  } else if (oldStash[key]._type !== _type) {
     changed = true;
   } else {
     for (i in properties) {
@@ -140,7 +140,7 @@ function updateStash(newStash, oldStash, key, modelOrCollection, type, propertie
   }
   if (changed) {
     if (modelOrCollection) {
-      newStash[key] = {type: type};
+      newStash[key] = {_type: _type};
       for (i in properties) {
         property = properties[i];
         newStash[key][property] = modelOrCollection[property];
@@ -192,8 +192,8 @@ exports.PureRenderMixin = {
       modelOrCollection = newObjects[key];
       var isImmutableModel = modelOrCollection && modelOrCollection._immutableBackboneModel;
       var isImmutableCollection = modelOrCollection && modelOrCollection._immutableBackboneCollection;
-      var wasImmutableModel = oldStash[key] && oldStash[key].type === 'model';
-      var wasImmutableCollection = oldStash[key] && oldStash[key].type === 'collection';
+      var wasImmutableModel = oldStash[key] && oldStash[key]._type === 'model';
+      var wasImmutableCollection = oldStash[key] && oldStash[key]._type === 'collection';
       if (isImmutableModel || wasImmutableModel) {
         changed = updateStash(newStash, oldStash, key, modelOrCollection, 'model', ['attributes']) || changed;
       } else if (isImmutableCollection || wasImmutableCollection) {
