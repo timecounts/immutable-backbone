@@ -194,7 +194,7 @@ exports.PureRenderMixin = {
       var isImmutableCollection = modelOrCollection && modelOrCollection._immutableBackboneCollection;
       var wasImmutableModel = oldStash[key] && oldStash[key]._type === 'model';
       var wasImmutableCollection = oldStash[key] && oldStash[key]._type === 'collection';
-      if (isImmutableModel || wasImmutableModel) {
+      if (isImmutableModel || (!isImmutableCollection && wasImmutableModel)) {
         changed = updateStash(newStash, oldStash, key, modelOrCollection, 'model', ['attributes']) || changed;
       } else if (isImmutableCollection || wasImmutableCollection) {
         changed = updateStash(newStash, oldStash, key, modelOrCollection, 'collection', ['models']) || changed;
