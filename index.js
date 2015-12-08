@@ -124,9 +124,13 @@ exports.infect = function(klass, options) {
   }
 };
 
-function updateStash(newStash, oldStash, key, modelOrCollection, properties) {
+function updateStash(newStash, oldStash, key, modelOrCollection, type, properties) {
   var changed = false, i, property;
   if (!oldStash[key]) {
+    changed = (modelOrCollection != null);
+  } else if (oldStash[key] && !modelOrCollection) {
+    changed = true;
+  } else if (oldStash[key].type !== type) {
     changed = true;
   } else {
     for (i in properties) {
@@ -135,10 +139,14 @@ function updateStash(newStash, oldStash, key, modelOrCollection, properties) {
     }
   }
   if (changed) {
-    newStash[key] = {};
-    for (i in properties) {
-      property = properties[i];
-      newStash[key][property] = modelOrCollection[property];
+    if (modelOrCollection) {
+      newStash[key] = {type: type};
+      for (i in properties) {
+        property = properties[i];
+        newStash[key][property] = modelOrCollection[property];
+      }
+    } else {
+      newStash[key] = null;
     }
   } else {
     newStash[key] = oldStash[key];
@@ -182,10 +190,14 @@ exports.PureRenderMixin = {
         changed = (oldObjects[key] !== newObjects[key]);
       }
       modelOrCollection = newObjects[key];
-      if (modelOrCollection._immutableBackboneModel) {
-        changed = updateStash(newStash, oldStash, key, modelOrCollection, ['attributes']) || changed;
-      } else if (modelOrCollection._immutableBackboneCollection) {
-        changed = updateStash(newStash, oldStash, key, modelOrCollection, ['models']) || changed;
+      var isImmutableModel = modelOrCollection && modelOrCollection._immutableBackboneModel;
+      var isImmutableCollection = modelOrCollection && modelOrCollection._immutableBackboneCollection;
+      var wasImmutableModel = oldStash[key] && oldStash[key].type === 'model';
+      var wasImmutableCollection = oldStash[key] && oldStash[key].type === 'collection';
+      if (isImmutableModel || wasImmutableModel) {
+        changed = updateStash(newStash, oldStash, key, modelOrCollection, 'model', ['attributes']) || changed;
+      } else if (isImmutableCollection || wasImmutableCollection) {
+        changed = updateStash(newStash, oldStash, key, modelOrCollection, 'collection', ['models']) || changed;
       }
     }
     return {changed: changed, stash: newStash};
